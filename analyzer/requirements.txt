@@ -1,0 +1,4 @@
+httpx
+apscheduler
+pykafka
+connexion[flask,uvicorn,swagger-ui]

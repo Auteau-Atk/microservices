@@ -1,0 +1,115 @@
+openapi: 3.0.0
+info:
+  title: Obtaining Car Parts
+  description: API for purchasing car parts and part delivery report
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /part/car_part:
+    post:
+      tags: []
+      summary: reports buying part information
+      description: Buying Car Part report
+      operationId: app.part_purchased
+      requestBody:
+        description: Buying Car Part report
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarPart'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+  /part/part_delivery:
+    post:
+      tags: []
+      summary: reports part delivery leaving information
+      description: Buying Car Part report
+      operationId: app.part_delivery
+      requestBody:
+        description: Deliver Departure report
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartDelivery'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+components:
+  schemas:
+    CarPart:
+      title: CarPart
+      type: object
+      properties:
+        trace_id:
+          type: string
+          description: Unique identifier for the event
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        part_id:
+          type: integer
+          description: The ID of the car part
+          format: int64
+          example: 13
+        part_name:
+          type: string
+          description: The name of the listed car part
+          example: rear_wing
+        price:
+          type: number
+          description: How much the car part is
+          format: double
+          example: 24.99
+        seller_id:
+          type: integer
+          description: The ID of the seller of the part
+          format: int64
+          example: 23
+        buyer_id:
+          type: integer
+          description: The ID of the buyer of the part
+          format: int64
+          example: 14
+      description: Represents a car part listed for sale and its buyer
+    PartDelivery:
+      title: PartDelivery
+      type: object
+      properties:
+        trace_id:
+          type: string
+          description: Unique identifier for the event
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        delivery_id:
+          type: integer
+          description: ID of the delivery
+          format: int64
+          example: 234
+        estimated_days_of_delivery:
+          type: integer
+          description: estimated number of days to arrive
+          format: int64
+          example: 15
+        departure_date:
+          type: string
+          description: The date the part left the company
+          format: date-time
+          example: 2025-01-15T14:30:00Z
+        destination:
+          type: string
+          description: Where the delivery is going to
+          example: "15225 244St, g5y 6u1 Surrey BC"
+        buyer_id:
+          type: integer
+          description: The ID of the buyer
+          format: int64
+          example: 123
+        part_id:
+          type: integer
+          description: The ID of the car part
+          format: int64
+          example: 13
+      description: Represents the delivery details for a purchased car part

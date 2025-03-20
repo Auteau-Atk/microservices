@@ -1,0 +1,3 @@
+httpx
+apscheduler
+connexion[flask,uvicorn,swagger-ui]

@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: Obtaining Car Parts
+  description: API for purchasing car parts and part delivery report
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /events/car_part:
+    get:
+      summary: Retrieve car part events within a timestamp range
+      description: Returns a list of car part events filtered by the specified start and end timestamps
+      operationId: app.get_part_purchased
+      parameters:
+        - name: start_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: A list of car part events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarPart'
+        "400":
+          description: Invalid
+  /events/part_delivery:
+    get:
+      summary: Retrieve part delivery events within a timestamp range
+      description: Returns a list of part delivery events filtered by the specified start and end timestamps
+      operationId: app.get_part_delivery
+      parameters:
+        - name: start_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: A list of part delivery events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PartDelivery'
+        "400":
+          description: Invalid
+components:
+  schemas:
+    CarPart:
+      title: CarPart
+      type: object
+      properties:
+        trace_id:
+          type: string
+          description: Unique identifier for the event
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        part_id:
+          type: integer
+          description: The ID of the car part
+          format: int64
+          example: 13
+        part_name:
+          type: string
+          description: The name of the listed car part
+          example: rear_wing
+        price:
+          type: number
+          description: How much the car part is
+          format: double
+          example: 24.99
+        seller_id:
+          type: integer
+          description: The ID of the seller of the part
+          format: int64
+          example: 23
+        buyer_id:
+          type: integer
+          description: The ID of the buyer of the part
+          format: int64
+          example: 14
+        date_created:
+          type: string
+          description: The timestamp when the event was created
+          format: date-time
+          example: 2025-01-15T14:30:00Z
+    PartDelivery:
+      title: PartDelivery
+      type: object
+      properties:
+        trace_id:
+          type: string
+          description: Unique identifier for the event
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        delivery_id:
+          type: integer
+          description: ID of the delivery
+          format: int64
+          example: 234
+        estimated_days_of_delivery:
+          type: integer
+          description: estimated number of days to arrive
+          format: int64
+          example: 15
+        departure_date:
+          type: string
+          description: The date the part left the company
+          format: date-time
+          example: 2025-01-15T14:30:00Z
+        destination:
+          type: string
+          description: Where the delivery is going to
+          example: "15225 244St, g5y 6u1 Surrey BC"
+        buyer_id:
+          type: integer
+          description: The ID of the buyer
+          format: int64
+          example: 123
+        part_id:
+          type: integer
+          description: The ID of the car part
+          format: int64
+          example: 13
+        date_created:
+          type: string
+          description: The timestamp when the event was created
+          format: date-time
+          example: 2025-01-15T14:30:00Z

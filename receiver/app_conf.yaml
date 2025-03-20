@@ -1,0 +1,10 @@
+version: 1
+eventstore1:
+  url: http://localhost:8090/part/car_part
+eventstore2:
+  url: http://localhost:8090/part/part_delivery
+
+events:
+  hostname: kafka
+  port: 29092
+  topic: events

@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  title: Obtaining Car Parts
+  description: API for purchasing car parts and part delivery report
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_stats
+      description: Gets Part Purchased and Delivery
+      responses:
+        '200':
+          description: Successfully returned a list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+        '400':
+          description: Bad Request
+components:
+  schemas:
+    Stats:
+      required:
+        - num_parts_purchased
+        - average_part_price
+        - num_part_deliveries
+        - average_days_of_delivery
+      type: object
+      properties:
+        num_parts_purchased:
+          type: integer
+          description: Total number of car parts purchased
+          format: in32
+          example: 150
+        average_part_price:
+          type: number
+          description: Average price of purchased car parts
+          format: double
+          example: 45.75
+        num_part_deliveries:
+          type: integer
+          description: Total number of part deliveries
+          format: int32
+          example: 120
+        average_days_of_delivery:
+          type: number
+          description: Average days taken for delivery
+          format: double
+          example: 3.5

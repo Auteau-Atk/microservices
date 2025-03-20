@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - jsondotpng
+    volumes:
+      - zookeeper-data:/data
+      - zookeeper-datalog:/datalog
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - jsondotpng
+    hostname: kafka
+    environment:
+      KAFKA_CREATE_TOPICS: "events:1:1"
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_LISTENERS: INSIDE://:29092,OUTSIDE://:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://kafka:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - ./data/kafka:/kafka
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  db:
+    image: mysql
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '1'
+      MYSQL_DATABASE: 'car-store-db'
+      MYSQL_USER: 'car-store-user'
+      MYSQL_PASSWORD: 'Password'
+    networks:
+      - jsondotpng
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: bind
+        source: data/database
+        target: /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  receiver:
+    build:
+      context: ./receiver
+      dockerfile: Dockerfile
+    container_name: receiver
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - jsondotpng
+    volumes:
+      - ./logs:/app/logs
+      - ./config/receiver:/app/config
+
+  storage:
+    build:
+      context: ./storage
+      dockerfile: Dockerfile
+    container_name: storage
+    depends_on:
+      db:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    networks:
+      - jsondotpng
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./logs:/app/logs
+      - ./config/storage:/app/config
+
+  processing:
+    build:
+      context: ./processing
+      dockerfile: Dockerfile
+    container_name: processing
+    depends_on:
+      storage:
+        condition: service_started
+    ports:
+      - "8100:8100"
+    networks:
+      - jsondotpng
+    volumes:
+      - ./logs:/app/logs
+      - ./config/processing:/app/config
+      - ./data/processing:/app/stats # Persistent JSON storage
+
+  analyzer:
+    build:
+      context: ./analyzer
+      dockerfile: Dockerfile
+    container_name: analyzer
+    depends_on:
+      processing:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8110:8110"
+    networks:
+      - jsondotpng
+    volumes:
+      - ./logs:/app/logs
+      - ./config/analyzer:/app/config
+
+networks:
+  jsondotpng:
+    name: jsondotpng
+    driver: bridge
+
+volumes:
+  my-db:
+  zookeeper-data:
+  zookeeper-datalog:

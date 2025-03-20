@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Analyzer Service API
+  description: API for analyzing Kafka events
+  version: "1.0.0"
+  contact:
+    email: mmulder10@bcit.ca
+
+paths:
+  /Part-Purchased:
+    get:
+      summary: Get event1 from the Kafka queue
+      operationId: app.get_event1
+      parameters:
+        - name: index
+          in: query
+          description: Index of the event1 to retrieve
+          required: true
+          schema:
+            type: integer
+            example: 3
+      responses:
+        '200':
+          description: Successfully retrieved event1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+
+  /Part-Delivered:
+    get:
+      summary: Get event2 from the Kafka queue
+      operationId: app.get_event2
+      parameters:
+        - name: index
+          in: query
+          description: Index of the event2 to retrieve
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Successfully retrieved event2
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+
+  /stats:
+    get:
+      summary: Get statistics of events in the Kafka queue
+      operationId: app.get_stats
+      responses:
+        '200':
+          description: Successfully retrieved event statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+
+components:
+  schemas:
+    Event:
+      type: object
+      required:
+        - index
+        - event_type
+        - payload
+      properties:
+        index:
+          type: integer
+          example: 3
+        event_type:
+          type: string
+          example: "event1"
+        payload:
+          type: object
+          example: {"key": "value"}
+
+    Stats:
+      type: object
+      required:
+        - num_event1
+        - num_event2
+      properties:
+        num_event1:
+          type: integer
+          example: 100
+        num_event2:
+          type: integer
+          example: 200
