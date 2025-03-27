@@ -4,7 +4,7 @@ echo "Stopping Kafka and ZooKeeper..."
 docker compose down
 
 echo "Removing Kafka and ZooKeeper data..."
-rm ./data/kafka/kafka-logs-kafka/meta.properties 
+sudo rm ./data/kafka/kafka-logs-kafka/meta.properties 
 
 echo "Restarting Kafka and ZooKeeper..."
 docker compose up -d
