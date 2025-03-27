@@ -1,5 +1,5 @@
-const PROCESSING_STATS_API_URL = "processing:8100/stats";
-const ANALYZER_API_URL = "analyzer:8110/stats";
+const PROCESSING_STATS_API_URL = "http://processing:8100/stats";
+const ANALYZER_API_URL = "http://analyzer:8110/stats";
 
 const makeReq = (url, cb) => {
     fetch(url)
