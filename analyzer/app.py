@@ -1,5 +1,7 @@
 import connexion
 from connexion import NoContent
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 import json
 import yaml
 import logging.config
@@ -81,6 +83,14 @@ def get_stats():
 
 # Create and configure the API
 app = connexion.FlaskApp(__name__, specification_dir="")
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_api("api.yaml", strict_validation=True, validate_responses=True)
 
 # Run the application
