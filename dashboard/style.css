@@ -12,6 +12,13 @@ code {
         monospace;
 }
 
+#dashboard-logo {
+    height: 150px; /* Adjust size as needed */
+    width: auto;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 #main {
     width: 70vw;
     margin: 0 auto;
