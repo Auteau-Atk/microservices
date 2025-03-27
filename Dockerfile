@@ -1,3 +1,5 @@
 FROM nginx
-COPY dashboard/index.html /usr/share/html/index.html
-COPY dashboard /usr/share/
+
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY dashboard /usr/share/nginx/html
