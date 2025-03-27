@@ -11,6 +11,8 @@ COPY . /app
 RUN chown -R nobody:nogroup /app
 USER nobody
 
+RUN chown -R nobody:nogroup /app/stat
+
 EXPOSE 8100
 
 ENTRYPOINT ["python"]
