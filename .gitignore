@@ -1,7 +1,8 @@
 # **/__pycache__/
 **/logs
 **/config
-**/data
+**/data/database
+**/data/kafka
 **/.env
 **/playbook.yml
 **/inventory
