@@ -38,7 +38,10 @@ def get_stats():
             stats = json.load(f)
             stats["latest_timestamp"] = datetime.fromisoformat(stats["latest_timestamp"])
     else:
+        # If the file doesn't exist, create it with DEFAULT_STATS
         stats = DEFAULT_STATS
+        with open(STATS_FILE, "w") as f:
+            json.dump(stats, f, default=str)  # Ensure that non-serializable data like datetime is serialized
 
     return stats, 200
 
@@ -49,7 +52,10 @@ def update_stats():
         with open(STATS_FILE, "r") as f:
             stats = json.load(f)
     else:
-        stats = DEFAULT_STATS.copy()
+        # If the file doesn't exist, create it with DEFAULT_STATS
+        stats = DEFAULT_STATS
+        with open(STATS_FILE, "w") as f:
+            json.dump(stats, f, default=str)  # Ensure that non-serializable data like datetime is serialized
 
     start_timestamp = stats["latest_timestamp"]
     end_timestamp = datetime.utcnow().isoformat()

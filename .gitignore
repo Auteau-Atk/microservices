@@ -3,3 +3,6 @@
 **/config
 **/data
 **/.env
+**/playbook.yml
+**/inventory
+**/ansible.cfg
