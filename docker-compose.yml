@@ -130,7 +130,9 @@ services:
       - ./config/analyzer:/app/config
 
   nginx:
-    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx_dashboard
     ports:
       - "80:80"
