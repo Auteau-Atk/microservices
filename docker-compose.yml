@@ -75,6 +75,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./config/receiver:/app/config
+    user: "nobody"
 
   storage:
     build:
@@ -93,6 +94,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./config/storage:/app/config
+    user: "nobody"
 
   processing:
     build:
@@ -110,6 +112,7 @@ services:
       - ./logs:/app/logs
       - ./config/processing:/app/config
       - ./data/processing:/app/stats # Persistent JSON storage
+    user: "nobody"
 
   analyzer:
     build:
@@ -128,6 +131,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./config/analyzer:/app/config
+    user: "nobody"
 
   nginx:
     build:
