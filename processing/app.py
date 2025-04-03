@@ -126,7 +126,7 @@ if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
         allow_methods=["*"],
         allow_headers=["*"],
     )
-app.add_api("car_store_api.yaml", "/processing", strict_validation=True, validate_responses=True)
+app.add_api("car_store_api.yaml", base_path="/processing", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
     init_scheduler()
