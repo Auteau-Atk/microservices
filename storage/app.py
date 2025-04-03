@@ -10,6 +10,9 @@ import yaml
 import logging.config
 from sqlalchemy import select
 
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
+
 import json
 import yaml
 import logging.config

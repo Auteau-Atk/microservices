@@ -7,6 +7,9 @@ import yaml
 import logging.config
 from pykafka import KafkaClient
 
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
+
 # Load logging configuration
 with open("/app/config/receiver_log_conf.yaml", "r") as f:
     LOG_CONFIG = yaml.safe_load(f.read())
