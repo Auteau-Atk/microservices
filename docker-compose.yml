@@ -84,7 +84,7 @@ services:
       context: ./storage
       dockerfile: Dockerfile
     environment:
-    CORS_ALLOW_ALL: yes # Change to yes if you want to allow all requests
+      CORS_ALLOW_ALL: yes # Change to yes if you want to allow all requests
     container_name: storage
     depends_on:
       db:
