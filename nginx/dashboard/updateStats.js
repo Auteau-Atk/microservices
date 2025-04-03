@@ -1,5 +1,5 @@
-const PROCESSING_STATS_API_URL = "http://ec2-52-34-115-4.us-west-2.compute.amazonaws.com/stats";
-const ANALYZER_API_URL = "http://ec2-52-34-115-4.us-west-2.compute.amazonaws.com/stats";
+const PROCESSING_STATS_API_URL = "http://ec2-35-93-208-85.us-west-2.compute.amazonaws.com/stats";
+const ANALYZER_API_URL = "http://ec2-35-93-208-85.us-west-2.compute.amazonaws.com/stats";
 
 const makeReq = (url, cb) => {
     fetch(url)
