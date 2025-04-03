@@ -7,6 +7,7 @@ import logging.config
 import requests
 import yaml
 from datetime import datetime
+import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # Load logging configuration

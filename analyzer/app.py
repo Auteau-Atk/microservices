@@ -6,6 +6,7 @@ import json
 import yaml
 import logging.config
 from pykafka import KafkaClient
+import os
 
 # Load logging configuration
 with open("/app/config/analyzer_log_conf.yaml", "r") as f:
