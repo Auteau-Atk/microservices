@@ -113,6 +113,8 @@ def get_event_ids():
     event_id = 0
 
     for msg in consumer:
+
+        print(message)
         message = json.loads(msg.value.decode("utf-8"))
         trace_id = message.get("payload", {}).get("trace_id")
         event_type = message.get("type", "unknown")
