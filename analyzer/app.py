@@ -110,7 +110,12 @@ def get_event_ids():
     consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
 
     event_list = []
-    event_id = 0
+
+    # Counters for each type
+    event_counters = {
+        "part_purchased": 0,
+        "part_delivery": 0
+    }
 
     for msg in consumer:
         print(msg)
@@ -122,15 +127,19 @@ def get_event_ids():
             logger.warning(f"Skipping event with missing trace_id: {message}")
             continue
 
+        # Assign event_id based on event type counter
+        event_id = event_counters.get(event_type, 0)
+        event_counters[event_type] = event_id + 1
+
         event_list.append({
             "event_id": event_id,
             "trace_id": trace_id,
             "type": event_type
         })
-        event_id += 1
 
     logger.info(f"Total valid events returned: {len(event_list)}")
     return event_list, 200
+
 
 # Create and configure the API
 app = connexion.FlaskApp(__name__, specification_dir="")
