@@ -38,18 +38,18 @@ def fetch_json(url):
     return response.json()
 
 def compare_trace_ids(queue_ids, db_ids):
-    print(queue_ids)
-    print(db_ids)
-    queue_set = {(e['trace_id'], e['event_id'], e['type']) for e in queue_ids}
-    db_set = {(e['trace_id'], e['event_id'], e['type']) for e in db_ids}
+    queue_list = [(e['trace_id'], e['event_id'], e['type']) for e in queue_ids]
+    db_list = [(e['trace_id'], e['event_id'], e['type']) for e in db_ids]
 
     missing_in_db = [
         {"trace_id": trace_id, "event_id": event_id, "type": type_}
-        for trace_id, event_id, type_ in queue_set - db_set
+        for trace_id, event_id, type_ in queue_list
+        if (trace_id, event_id, type_) not in db_list
     ]
     missing_in_queue = [
         {"trace_id": trace_id, "event_id": event_id, "type": type_}
-        for trace_id, event_id, type_ in db_set - queue_set
+        for trace_id, event_id, type_ in db_list
+        if (trace_id, event_id, type_) not in queue_list
     ]
     return missing_in_db, missing_in_queue
 
