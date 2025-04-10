@@ -123,15 +123,39 @@
             });
 
             // Storage event IDs
+            // Storage event IDs - show most recent 5 per type
             makeReq(STORAGE_EVENTS_API_URL, result => {
                 const container = document.getElementById("storage-events");
                 container.innerHTML = "";
+
+                // Group events by type
+                const grouped = {};
                 result.forEach(event => {
-                    const p = document.createElement("p");
-                    p.innerHTML = `<strong>Event ID:</strong> ${event.event_id}, <strong>Trace ID:</strong> ${event.trace_id}, <strong>Type:</strong> ${event.type}`;
-                    container.appendChild(p);
+                    if (!grouped[event.type]) {
+                        grouped[event.type] = [];
+                    }
+                    grouped[event.type].push(event);
+                });
+
+                // For each type, get the latest 5 events
+                Object.entries(grouped).forEach(([type, events]) => {
+                    const heading = document.createElement("h4");
+                    heading.textContent = `Type: ${type}`;
+                    container.appendChild(heading);
+
+                    // Sort events by descending event_id and slice top 5
+                    const latestEvents = events
+                        .sort((a, b) => b.event_id - a.event_id)
+                        .slice(0, 5);
+
+                    latestEvents.forEach(event => {
+                        const p = document.createElement("p");
+                        p.innerHTML = `<strong>Event ID:</strong> ${event.event_id}, <strong>Trace ID:</strong> ${event.trace_id}`;
+                        container.appendChild(p);
+                    });
                 });
             });
+
         };
 
         const updateErrorMessages = message => {
