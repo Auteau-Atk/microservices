@@ -1,0 +1,47 @@
+{
+  "last_updated": "2025-04-10T17:28:29.911727Z",
+  "counts": {
+    "processing": {
+      "average_days_of_delivery": 18.0,
+      "average_part_price": 24.99,
+      "latest_timestamp": "2025-04-10T17:28:18.591240Z",
+      "num_part_deliveries": 4,
+      "num_parts_purchased": 4
+    },
+    "queue": {
+      "num_event1": 3,
+      "num_event2": 3
+    },
+    "db": {
+      "part_delivery": 3,
+      "part_purchased": 3
+    }
+  },
+  "not_in_db": [],
+  "not_in_queue": [
+    {
+      "trace_id": "077a88ef-84f7-4494-ba20-75bb6f26b064",
+      "event_id": 1
+    },
+    {
+      "trace_id": "164476ab-23f6-40a7-9f04-2f7fb91d0a61",
+      "event_id": 1
+    },
+    {
+      "trace_id": "53c5d939-ae17-4780-b668-69561b3dfc36",
+      "event_id": 3
+    },
+    {
+      "trace_id": "f03f23d6-9095-450f-bb96-ba640b5843d9",
+      "event_id": 2
+    },
+    {
+      "trace_id": "afb3e1f6-133c-4bdc-8829-89e7b18e15e4",
+      "event_id": 3
+    },
+    {
+      "trace_id": "4417ccc6-0830-4b5d-a910-6cfc1fd708a8",
+      "event_id": 2
+    }
+  ]
+}

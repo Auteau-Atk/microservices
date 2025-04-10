@@ -48,12 +48,30 @@
                 </div>
             </div>
         </div>
+        <h2>Event Storage</h2>
+            <div id="storage">
+                <div>
+                    <h3>Event Type Counts</h3>
+                    <div id="storage-counts">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Event Trace IDs</h3>
+                    <div id="storage-events">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
     </main>
 
     
     <script>
-        const PROCESSING_STATS_API_URL = "http://ec2-44-243-210-31.us-west-2.compute.amazonaws.com:8100/stats";
-        const ANALYZER_API_URL = "http://ec2-44-243-210-31.us-west-2.compute.amazonaws.com:8110/stats";
+        const PROCESSING_STATS_API_URL = "http://localhost:8100/stats";
+        const ANALYZER_API_URL = "http://localhost:8110/stats";
+        const STORAGE_STATS_API_URL = "http://localhost:8110/storage/stats";
+        const STORAGE_EVENTS_API_URL = "http://localhost:8110/storage/events";
+
 
         const makeReq = (url, cb) => {
             fetch(url)
@@ -83,11 +101,13 @@
         const getStats = () => {
             document.getElementById("last-updated-value").innerText = getLocaleDateStr();
 
+            // Processing stats
             makeReq(PROCESSING_STATS_API_URL, result => {
                 updateCodeDiv(result, "processing-stats");
                 document.getElementById("last-updated-value").innerText = result.latest_timestamp || getLocaleDateStr();
             });
 
+            // Analyzer stats
             makeReq(ANALYZER_API_URL, result => {
                 if (result.num_event1 !== undefined) {
                     document.getElementById("event-1").innerHTML = `<p><strong>Number of Event 1:</strong> ${result.num_event1}</p>`;
@@ -95,6 +115,22 @@
                 if (result.num_event2 !== undefined) {
                     document.getElementById("event-2").innerHTML = `<p><strong>Number of Event 2:</strong> ${result.num_event2}</p>`;
                 }
+            });
+
+            // Storage counts
+            makeReq(STORAGE_STATS_API_URL, result => {
+                updateCodeDiv(result, "storage-counts");
+            });
+
+            // Storage event IDs
+            makeReq(STORAGE_EVENTS_API_URL, result => {
+                const container = document.getElementById("storage-events");
+                container.innerHTML = "";
+                result.forEach(event => {
+                    const p = document.createElement("p");
+                    p.innerHTML = `<strong>Event ID:</strong> ${event.event_id}, <strong>Trace ID:</strong> ${event.trace_id}, <strong>Type:</strong> ${event.type}`;
+                    container.appendChild(p);
+                });
             });
         };
 

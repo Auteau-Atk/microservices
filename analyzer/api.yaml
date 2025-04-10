@@ -63,6 +63,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/Stats'
 
+  /storage/stats:
+    get:
+      summary: Get event counts from Kafka
+      operationId: app.get_event_counts
+      responses:
+        '200':
+          description: Event type counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  part_purchased:
+                    type: integer
+                    example: 100
+                  part_delivery:
+                    type: integer
+                    example: 200
+
+  /storage/events:
+    get:
+      summary: Get all events and trace IDs
+      operationId: app.get_event_ids
+      responses:
+        '200':
+          description: List of events and trace IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: integer
+                      example: 42
+                    trace_id:
+                      type: string
+                      example: "550e8400-e29b-41d4-a716-446655440000"
+                    type:
+                      type: string
+                      example: "part_purchased"
+
 components:
   schemas:
     Event:

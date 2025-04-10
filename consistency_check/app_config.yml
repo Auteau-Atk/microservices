@@ -1,0 +1,9 @@
+processing_url: http://processing:8100
+analyzer_url: http://analyzer:8110
+storage_url: http://storage:8090
+
+json_file: /data/consistency_check/consistency_results.json
+
+kafka:
+  bootstrap_servers: kafka:9092
+  topic: event_topic

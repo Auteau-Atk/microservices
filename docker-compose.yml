@@ -91,6 +91,8 @@ services:
         condition: service_started
       kafka:
         condition: service_healthy
+    ports:
+      - "8090:8090"
     networks:
       - jsondotpng
     volumes:
@@ -137,6 +139,28 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./config/analyzer:/app/config
+    user: "nobody"
+
+  consistency_check:
+    build:
+      context: ./consistency_check
+      dockerfile: Dockerfile
+    container_name: consistency_check
+    depends_on:
+      storage:
+        condition: service_started
+      analyzer:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8111:8111"
+    networks:
+      - jsondotpng
+    volumes:
+      - ./logs:/app/logs
+      - ./config/consistency_check:/app/config
+      - ./data/consistency_check:/app/stats # Persistent JSON storage
     user: "nobody"
 
   nginx:

@@ -46,3 +46,16 @@ code {
     border: 1px solid orange;
     padding: 1em;
 }
+
+#storage {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 1em;
+}
+
+#storage > div {
+    border: 1px solid grey;
+    padding: 1em;
+    width: 45%;
+}

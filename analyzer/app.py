@@ -28,7 +28,6 @@ topic_name = config['events']['topic']
 
 
 def get_event(index, event_type):
-    """Retrieve an event from Kafka by index and type."""
     logger.info(f"Fetching event of type '{event_type}' at index {index}")
     client = KafkaClient(hosts=hostname)
     topic = client.topics[str.encode(topic_name)]
@@ -61,7 +60,6 @@ def get_event2(index):
 
 
 def get_stats():
-    """Retrieve statistics about the events."""
     logger.info("Fetching event statistics")
     client = KafkaClient(hosts=hostname)
     topic = client.topics[str.encode(topic_name)]
@@ -80,6 +78,59 @@ def get_stats():
     stats = {"num_event1": num_event1, "num_event2": num_event2}
     logger.info(f"Event statistics: {stats}")
     return stats, 200
+
+def get_event_counts():
+    logger.info("Fetching event counts for Consistency Check")
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(topic_name)]
+    consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
+
+    part_purchased_count = 0
+    part_delivery_count = 0
+
+    for msg in consumer:
+        message = json.loads(msg.value.decode("utf-8"))
+        if message["type"] == "part_purchased":
+            part_purchased_count += 1
+        elif message["type"] == "part_delivery":
+            part_delivery_count += 1
+
+    counts = {
+        "part_purchased": part_purchased_count,
+        "part_delivery": part_delivery_count
+    }
+    logger.info(f"Event counts: {counts}")
+    return counts, 200
+
+
+def get_event_ids():
+    logger.info("Fetching event and trace IDs for Consistency Check")
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(topic_name)]
+    consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
+
+    event_list = []
+    event_id = 0
+
+    for msg in consumer:
+        message = json.loads(msg.value.decode("utf-8"))
+        trace_id = message.get("payload", {}).get("trace_id")
+        event_type = message.get("type", "unknown")
+
+        if trace_id is None:
+            logger.warning(f"Skipping event with missing trace_id: {message}")
+            continue
+
+        event_list.append({
+            "event_id": event_id,
+            "trace_id": trace_id,
+            "type": event_type
+        })
+        event_id += 1
+
+    logger.info(f"Total valid events returned: {len(event_list)}")
+    return event_list, 200
+
 
 
 # Create and configure the API

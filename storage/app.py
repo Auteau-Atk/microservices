@@ -87,6 +87,33 @@ def get_part_delivery(session, start_timestamp=None, end_timestamp=None):
     logger.info(f"Found {len(results)} part deliveries (start: {start}, end: {end})")
     return results, 200
 
+@use_db_session
+def get_event_counts(session):
+    part_purchased_count = session.query(PartPurchased).count()
+    part_delivery_count = session.query(PartDelivery).count()
+
+    return {
+        "part_purchased": part_purchased_count,
+        "part_delivery": part_delivery_count
+    }, 200
+
+@use_db_session
+def get_event_ids(session):
+    purchased = session.query(PartPurchased).all()
+    delivered = session.query(PartDelivery).all()
+
+    purchased_ids = [
+        {"event_id": purchase.part_id, "trace_id": purchase.trace_id, "type": "part_purchased"}
+        for purchase in purchased
+    ]
+
+    delivery_ids = [
+        {"event_id": delivery.delivery_id, "trace_id": delivery.trace_id, "type": "part_delivery"}
+        for delivery in delivered
+    ]
+
+    return purchased_ids + delivery_ids, 200
+
 # Load Kafka configurations
 with open("/app/config/storage_app_conf.yaml", "r") as f:
     config = yaml.safe_load(f.read())
