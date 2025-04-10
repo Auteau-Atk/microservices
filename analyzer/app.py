@@ -113,10 +113,9 @@ def get_event_ids():
     event_id = 0
 
     for msg in consumer:
-
-        print(message)
+        print(msg)
         message = json.loads(msg.value.decode("utf-8"))
-        trace_id = message.get("payload", {}).get("trace_id")
+        trace_id = message.get("trace_id")
         event_type = message.get("type", "unknown")
 
         if trace_id is None:
@@ -132,8 +131,6 @@ def get_event_ids():
 
     logger.info(f"Total valid events returned: {len(event_list)}")
     return event_list, 200
-
-
 
 # Create and configure the API
 app = connexion.FlaskApp(__name__, specification_dir="")
