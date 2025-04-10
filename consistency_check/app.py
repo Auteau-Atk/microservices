@@ -9,6 +9,9 @@ import yaml
 import logging.config
 from datetime import datetime
 
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
+
 # Load YAML config
 with open("/app/config/app_config.yml", "r") as f:
     config = yaml.safe_load(f)
@@ -35,15 +38,17 @@ def fetch_json(url):
     return response.json()
 
 def compare_trace_ids(queue_ids, db_ids):
+    print(queue_ids)
+    print(db_ids)
     queue_set = {(e['trace_id'], e['event_id'], e['type']) for e in queue_ids}
     db_set = {(e['trace_id'], e['event_id'], e['type']) for e in db_ids}
 
     missing_in_db = [
-        {"trace_id": trace_id, "event_id": event_id}
+        {"trace_id": trace_id, "event_id": event_id, "type": type_}
         for trace_id, event_id, type_ in queue_set - db_set
     ]
     missing_in_queue = [
-        {"trace_id": trace_id, "event_id": event_id}
+        {"trace_id": trace_id, "event_id": event_id, "type": type_}
         for trace_id, event_id, type_ in db_set - queue_set
     ]
     return missing_in_db, missing_in_queue
@@ -94,6 +99,14 @@ def get_checks():
 
 # Create and configure the API
 app = connexion.FlaskApp(__name__, specification_dir=".")
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_api("consistency_check.yaml", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
