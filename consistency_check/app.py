@@ -38,6 +38,8 @@ def fetch_json(url):
     return response.json()
 
 def compare_trace_ids(queue_ids, db_ids):
+    print(queue_ids)
+    print(db_ids)
     queue_list = [(e['trace_id'], e['event_id'], e['type']) for e in queue_ids]
     db_list = [(e['trace_id'], e['event_id'], e['type']) for e in db_ids]
 
