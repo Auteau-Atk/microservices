@@ -1,4 +1,5 @@
 import connexion
+from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 import os
@@ -7,7 +8,6 @@ import logging.config
 import requests
 import yaml
 from datetime import datetime
-import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # Load logging configuration
@@ -41,10 +41,7 @@ def get_stats():
             stats = json.load(f)
             stats["latest_timestamp"] = datetime.fromisoformat(stats["latest_timestamp"])
     else:
-        # If the file doesn't exist, create it with DEFAULT_STATS
         stats = DEFAULT_STATS
-        with open(STATS_FILE, "w") as f:
-            json.dump(stats, f, default=str)  # Ensure that non-serializable data like datetime is serialized
 
     return stats, 200
 
@@ -55,10 +52,7 @@ def update_stats():
         with open(STATS_FILE, "r") as f:
             stats = json.load(f)
     else:
-        # If the file doesn't exist, create it with DEFAULT_STATS
-        stats = DEFAULT_STATS
-        with open(STATS_FILE, "w") as f:
-            json.dump(stats, f, default=str)  # Ensure that non-serializable data like datetime is serialized
+        stats = DEFAULT_STATS.copy()
 
     start_timestamp = stats["latest_timestamp"]
     end_timestamp = datetime.utcnow().isoformat()
@@ -115,18 +109,17 @@ def init_scheduler():
     sched.add_job(update_stats, 'interval', seconds=get_config['scheduler']['interval'])
     sched.start()
 
-
-app = connexion.FlaskApp(__name__, specification_dir='')
-if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
-    app.add_middleware(
-        CORSMiddleware,
-        position=MiddlewarePosition.BEFORE_EXCEPTION,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-app.add_api("car_store_api.yaml", base_path="/processing", strict_validation=True, validate_responses=True)
+# Create and configure the API
+app = connexion.FlaskApp(__name__, specification_dir="")
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.add_api("car_store_api.yaml", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
     init_scheduler()

@@ -8,15 +8,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
-# Ensure the directory and file are owned by nobody
-RUN mkdir -p /app/stats && \
-    touch /app/stats/stats.json && \
-    chown -R nobody:nogroup /app/stats
-
+RUN chown -R nobody:nogroup /app
 USER nobody
 
 EXPOSE 8100
 
 ENTRYPOINT ["python"]
 CMD ["app.py"]
-
